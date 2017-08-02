@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>BLIU</title>
+<!-- create app at https://www.linkedin.com/secure/developer to get key-->
+<script type="text/javascript" src="https://platform.linkedin.com/in.js">
+    api_key: 78ijurayp720rm
+</script>
+</head>
+
+<body>
+<script type="text/javascript">
+    IN.Event.on(IN, "auth", function(a){
+        alert(JSON.stringify(a));
+        start();
+        }
+    )
+    function start(argument) {
+        // body...
+        IN.API.Raw("/people/~").method("GET").body("").result(function(argument) {
+            // body...
+            alert(JSON.stringify(argument));
+        });
+    }
+</script>
+<script type="in/Login"></script>
+</body>
+
+</html>
