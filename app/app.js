@@ -1,29 +1,54 @@
 var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
 var cookieParser = require('cookie-parser');
+var session = require('express-session');
 var bodyParser = require('body-parser');
-
-var index = require('./routes/index');
-var users = require('./routes/users');
+var path = require('path');
 
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'public'));
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+
+// public folder setup
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/users', users);
+
+//session infor
+app.use(cookieParser());
+// app.use(session({secret: "Shh, its a secret!"}));
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}))
+
+app.get('/home', function(req, res) {
+    if (req.session.user){
+        res.render('home.ejs', {user: req.session.user});
+    }
+    else{
+        console.log("redirect")
+        console.log(req.session.user)
+        res.redirect('/')
+    }
+});
+
+app.post('/login', function(req, res){
+    console.log("login body")
+    console.log(req.body)
+    console.log("login user")
+    console.log(JSON.parse(req.body.user))
+    req.session.user = JSON.parse(req.body.user)
+    console.log("set session")
+    console.log(req.session.user)
+    // res.redirect('/home')
+    res.json("yes")
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -32,15 +57,5 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
 
 module.exports = app;

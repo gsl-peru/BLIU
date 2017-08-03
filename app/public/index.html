@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>BLIU</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!-- create app at https://www.linkedin.com/secure/developer to get key-->
 <script type="text/javascript" src="https://platform.linkedin.com/in.js">
     api_key: 78ijurayp720rm
@@ -10,9 +11,9 @@
 </head>
 
 <body>
+
 <script type="text/javascript">
     IN.Event.on(IN, "auth", function(a){
-        alert(JSON.stringify(a));
         start();
         }
     )
@@ -20,7 +21,18 @@
         // body...
         IN.API.Raw("/people/~").method("GET").body("").result(function(argument) {
             // body...
-            alert(JSON.stringify(argument));
+            $.ajax({
+                url: '/login',
+                type: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    // alert(data);
+                    window.location.href = 'home';
+
+                },
+                data: {user: JSON.stringify(argument), userdata: argument}
+            });
+
         });
     }
 </script>
